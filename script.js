@@ -3,11 +3,12 @@ class Calculator {
     constructor(previousOperandTextElement, currentOperandTextElement) {
         this.previousOperandTextElement = previousOperandTextElement;
         this.currentOperandTextElement = currentOperandTextElement;
+        this.MAX_DIGITS = 12;
         this.clear();
     }
 
     clear() {
-        this.currentOperand = '';
+        this.currentOperand = '0';
         this.previousOperand = '';
         this.operation = undefined;
     }
@@ -18,7 +19,19 @@ class Calculator {
 
     appendNumber(number) {
         if (number === '.' && this.currentOperand.includes('.')) return;
-        this.currentOperand = this.currentOperand.toString() + number.toString();
+        if (number === '.' && this.currentOperand === '0') {
+            this.currentOperand = '0.';
+        } else {
+            if (this.currentOperand.length > 0) {
+                let digits = this.getDigits();
+                if (digits.length < this.MAX_DIGITS) {
+                    this.currentOperand += number;
+                }
+            } else {
+                this.currentOperand += number;
+            }
+        }
+         
     }
 
     chooseOperation(operation) {
@@ -28,7 +41,7 @@ class Calculator {
         }
         this.operation = operation;
         this.previousOperand = this.currentOperand;
-        this.currentOperand = '';
+        this.currentOperand = '0';
     }
 
     compute() {
@@ -47,8 +60,11 @@ class Calculator {
                 computation = prev * current
                 break
             case '÷':
+                if (current === 0){
+                    alert("Cannot divide by 0!");
+                }
                 computation = prev / current
-                break  
+                break   
             default:
                 return     
         }
@@ -57,7 +73,16 @@ class Calculator {
         this.previousOperand = '';
     }
 
+    getPercent() {
+        const currentNum = parseFloat(this.currentOperand);
+        this.currentOperand = (currentNum / 100);
+    }
+
     getDisplayNumber(number) {
+        if (isNaN(number)) {
+            this.clear();
+            return;
+        }
         const stringNumber = number.toString();
         const integerDigits = parseFloat(stringNumber.split('.'[0]));
         const decimalDigits = stringNumber.split('.')[1];
@@ -82,6 +107,11 @@ class Calculator {
             this.previousOperandTextElement.innerText = '';
         }
     }
+
+    getDigits() {
+        let numberPattern = /\d+/g;
+        return this.currentOperand.match(numberPattern).join('');
+    }
 }
 
 // Selecting Elements from the html file 
@@ -91,6 +121,7 @@ const equalsButtons = document.querySelector('[data-equals]');
 const deleteButton = document.querySelector('[data-delete]');
 const allClearButton = document.querySelector('[data-all-clear]');
 const previousOperandTextElement = document.querySelector('[data-previous-operand]');
+const percentButton = document.querySelector('[data-percent]');
 const currentOperandTextElement = document.querySelector('[data-current-operand]'); 
 
 const calculator = new Calculator(previousOperandTextElement, currentOperandTextElement);
@@ -123,5 +154,12 @@ operationButtons.forEach(button => {
     calculator.delete();
     calculator.updateDisplay();
   })
+
+  percentButton.addEventListener('click', button => {
+    calculator.getPercent();
+    calculator.updateDisplay();
+  })
+
+
   
 
