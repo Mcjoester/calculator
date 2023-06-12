@@ -75,9 +75,18 @@
 
   #result {
     height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin: 0;
+    vertical-align: bottom;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: scroll;
+    
   }
 
-  .previousNumber {
+   .previousNumber {
     text-align: right;
     height: 20px;
     margin: 0 20px;
@@ -90,7 +99,9 @@
     text-align: right;
     height: 60px;
     margin: 10px 20px;
+    padding-top: 10px;
     font-size: 30px;
+    text-overflow: "[...]";
   }
 
   #keyboard {
@@ -109,7 +120,7 @@
     font-weight: bold;
     font-size: 15px;
   }
-  
+
   .number, .empty {
     background-color: #eaedef;
   }

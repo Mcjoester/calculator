@@ -99,12 +99,15 @@ class Calculator {
         }
     }
 
-    updateDisplay() {
+    updateDisplay()  {
         this.currentOperandTextElement.innerText = this.getDisplayNumber(this.currentOperand);
-        if (this.operation != null) {
-            this.previousOperandTextElement.innerText = `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`;
+        this.previousOperandTextElement.innerText = this.getDisplayNumber(this.previousOperand) + ' ' + (this.operation || '');
+      
+        const currentOperandLength = this.currentOperand.toString().replace('.', '').replace('-', '').length;
+        if (currentOperandLength > 12) {
+            this.currentOperandTextElement.style.fontSize = '20px';
         } else {
-            this.previousOperandTextElement.innerText = '';
+            this.currentOperandTextElement.style.fontSize = '30px';
         }
     }
 
