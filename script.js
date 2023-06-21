@@ -5,6 +5,9 @@ class Calculator {
         this.currentOperandTextElement = currentOperandTextElement;
         this.MAX_DIGITS = 12;
         this.clear();
+
+        this.handleKeyPress = this.handleKeyPress.bind(this);
+        document.addEventListener('keydown', this.handleKeyPress);
     }
 
     clear() {
@@ -14,25 +17,29 @@ class Calculator {
     }
 
     delete() {
+        if (this.currentOperand === '0') return;
         this.currentOperand = this.currentOperand.toString().slice(0, -1);
-    }
+        if (this.currentOperand === '') {
+          this.currentOperand = '0';
+        }
+      }
 
     appendNumber(number) {
         if (number === '.' && this.currentOperand.includes('.')) return;
         if (number === '.' && this.currentOperand === '0') {
-            this.currentOperand = '0.';
+          this.currentOperand = '0.';
         } else {
-            if (this.currentOperand.length > 0) {
-                let digits = this.getDigits();
-                if (digits.length < this.MAX_DIGITS) {
-                    this.currentOperand += number;
-                }
-            } else {
-                this.currentOperand += number;
+          if (this.shouldReset) {
+            this.currentOperand = number.toString();
+            this.shouldReset = false; 
+          } else {
+            let digits = this.getDigits();
+            if (digits.length < this.MAX_DIGITS) {
+              this.currentOperand += number;
             }
+          }
         }
-         
-    }
+      }
 
     chooseOperation(operation) {
         if (this.currentOperand === '') return;
@@ -68,9 +75,10 @@ class Calculator {
             default:
                 return     
         }
-        this.currentOperand = computation;
+        this.currentOperand = Math.round(computation * 1000) / 1000;
         this.operation = undefined;
         this.previousOperand = '';
+        this.shouldReset = true;
     }
 
     getPercent() {
@@ -78,6 +86,7 @@ class Calculator {
         this.currentOperand = (currentNum / 100);
     }
 
+    
     getDisplayNumber(number) {
         if (isNaN(number)) {
             this.clear();
@@ -115,6 +124,38 @@ class Calculator {
         let numberPattern = /\d+/g;
         return this.currentOperand.match(numberPattern).join('');
     }
+
+    handleKeyPress(e) {
+        e.preventDefault();
+        const key = e.key;
+    
+        if (key >= '0' && key <= '9') {
+          this.appendNumber(key);
+          this.updateDisplay();
+        } else if (key === '.' || key === ',') {
+          this.appendNumber('.');
+          this.updateDisplay();
+        } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+          if (key === '/') {
+            this.chooseOperation('÷');
+          } else if (key === "*") {
+            this.chooseOperation('x');
+          } else {
+            this.chooseOperation(key);
+          }
+          this.updateDisplay();
+        } else if (key === 'Enter' || key === '=') {
+          this.compute();
+          this.updateDisplay();
+        } else if (key === 'Backspace') {
+          this.delete();
+          this.updateDisplay();
+        } else if (key === '%') {
+            this.getPercent();
+            this.updateDisplay();
+        }
+      }
+
 }
 
 // Selecting Elements from the html file 
@@ -128,6 +169,7 @@ const percentButton = document.querySelector('[data-percent]');
 const currentOperandTextElement = document.querySelector('[data-current-operand]'); 
 
 const calculator = new Calculator(previousOperandTextElement, currentOperandTextElement);
+
 
 numberButtons.forEach(button => {
     button.addEventListener('click', () => {
