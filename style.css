@@ -88,9 +88,6 @@ html {
     margin: 0;
     vertical-align: bottom;
     white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: scroll;
-    
   }
 
    .previousNumber {
