@@ -51,6 +51,12 @@
     isolation: isolate;
   }
 
+html {
+  * {
+    color: #000000;
+  }
+}
+
   /* Coding starts here */
     body {
         background: linear-gradient(#90afec, #d5ad63);
