@@ -110,8 +110,11 @@
     display: flex;
     flex-wrap: wrap;
     color: black;
-
   }
+
+button {
+  color: black;
+}
 
   .operator, .number, .empty {
     width: 50px;
